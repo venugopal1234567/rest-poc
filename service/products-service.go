@@ -17,7 +17,7 @@ func NewProductService() ProductService {
 }
 
 var (
-	repo repository.ProductRpository = repository.NewInMemRepository()
+	repo repository.ProductRpository = repository.NewMongoRepository()
 )
 
 func (s *service) Add(product *entity.Product) error {
