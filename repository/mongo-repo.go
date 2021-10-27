@@ -8,6 +8,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.mongodb.org/mongo-driver/mongo/options"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -62,10 +63,47 @@ func (ps *mongoRepo) List() ([]*entity.Product, error) {
 
 func (ps *mongoRepo) Add(p *entity.Product) error {
 	productCollection := mongoDb.Collection("Products")
+	p.ID = primitive.NewObjectID()
 	result, err := productCollection.InsertOne(context.Background(), p)
 	if err != nil {
 		return err
 	}
-	fmt.Sprintf("%v", result.InsertedID)
+	fmt.Printf("%v", result.InsertedID)
+	return nil
+}
+
+func (ps *mongoRepo) Update(p *entity.Product) error {
+	productCollection := mongoDb.Collection("Products")
+	update := bson.M{
+		"$set": bson.M{
+			"name":     p.Name,
+			"cost":     p.Cost,
+			"quantity": p.Quantity,
+		},
+	}
+	result, err := productCollection.UpdateByID(context.Background(), p.ID, update)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Printf("%v", result.ModifiedCount)
+	return nil
+}
+
+func (ps *mongoRepo) Delete(id string) error {
+	productCollection := mongoDb.Collection("Products")
+	objID, err := primitive.ObjectIDFromHex(id)
+	if err != nil {
+		return err
+	}
+	delete := bson.M{
+		"_id": objID,
+	}
+	result, err := productCollection.DeleteOne(context.Background(), delete)
+	if err != nil {
+		fmt.Println(err)
+		return err
+	}
+	fmt.Printf("%v", result.DeletedCount)
 	return nil
 }

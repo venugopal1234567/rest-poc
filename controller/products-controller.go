@@ -5,11 +5,15 @@ import (
 	"net/http"
 	"rest-poc/entity"
 	"rest-poc/service"
+
+	"github.com/gorilla/mux"
 )
 
 type ProductController interface {
 	GeAllProducts(rw http.ResponseWriter, r *http.Request)
 	AddProduct(rw http.ResponseWriter, r *http.Request)
+	UpdateProduct(rw http.ResponseWriter, r *http.Request)
+	Delete(rw http.ResponseWriter, r *http.Request)
 }
 
 type controller struct {
@@ -54,4 +58,41 @@ func (c controller) AddProduct(rw http.ResponseWriter, r *http.Request) {
 	rw.Header().Set("Content-type", "application/json")
 	rw.WriteHeader(http.StatusOK)
 	rw.Write([]byte(`{ "message" : "Successfully added product"}`))
+}
+
+func (c controller) UpdateProduct(rw http.ResponseWriter, r *http.Request) {
+	var product *entity.Product
+	err := json.NewDecoder(r.Body).Decode(&product)
+	if err != nil {
+		rw.WriteHeader(http.StatusBadRequest)
+		rw.Write([]byte(`{ "error" : "Error un marshaling request"}`))
+		return
+	}
+	err = c.svc.Update(product)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		rw.Write([]byte(`{ "error" : "failed to update product"}`))
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	rw.Write([]byte(`{ "message" : "Successfully updated product"}`))
+}
+
+func (c controller) Delete(rw http.ResponseWriter, r *http.Request) {
+
+	params := mux.Vars(r)
+	id := params["id"]
+
+	err := c.svc.Delete(id)
+	if err != nil {
+		rw.WriteHeader(http.StatusInternalServerError)
+		rw.Write([]byte(`{ "error" : "failed to delete product"}`))
+		return
+	}
+
+	rw.Header().Set("Content-type", "application/json")
+	rw.WriteHeader(http.StatusOK)
+	rw.Write([]byte(`{ "message" : "Successfully deleted product"}`))
 }

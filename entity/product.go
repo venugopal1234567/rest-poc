@@ -1,12 +1,13 @@
 package entity
 
-import "time"
+import (
+	"go.mongodb.org/mongo-driver/bson/primitive"
+)
 
 type Product struct {
-	ID          string    `json:"id" bson:"id"`
-	Name        string    `json:"name" bson:"name"`
-	Cost        int       `json:"cost" bson:"cost"`
-	Quantity    int       `json:"quantity" bson:"quantity"`
-	DateCreated time.Time `json:"date_created" bson:"dateCreated"`
-	DateUpdated time.Time `json:"date_updated" bson:"dateUpdated"`
+	ID       primitive.ObjectID `json:"id" bson:"_id,omitempty"`
+	SkuId    string             `json:"skuId" bson:"skuId,omitempty"`
+	Name     string             `json:"name" bson:"name,omitempty"`
+	Cost     int                `json:"cost" bson:"cost,omitempty"`
+	Quantity int                `json:"quantity" bson:"quantity,omitempty"`
 }

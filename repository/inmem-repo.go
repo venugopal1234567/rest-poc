@@ -15,7 +15,6 @@ var (
 
 func init() {
 	products = []*entity.Product{{
-		ID:       "12add",
 		Name:     "samsung",
 		Cost:     300,
 		Quantity: 12,
@@ -28,5 +27,13 @@ func (ps *repo) List() ([]*entity.Product, error) {
 
 func (ps *repo) Add(p *entity.Product) error {
 	products = append(products, p)
+	return nil
+}
+
+func (ps *repo) Update(p *entity.Product) error {
+	return nil
+}
+
+func (ps *repo) Delete(id string) error {
 	return nil
 }

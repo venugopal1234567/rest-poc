@@ -23,6 +23,8 @@ func main() {
 
 	httpRoute.GET("/products", productController.GeAllProducts)
 	httpRoute.POST("/products", productController.AddProduct)
+	httpRoute.PUT("/products", productController.UpdateProduct)
+	httpRoute.DELETE("/products/{id}", productController.Delete)
 
 	httpRoute.SERVE(port)
 }
