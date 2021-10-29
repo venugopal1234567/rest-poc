@@ -1,0 +1,21 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rest-poc-deployment
+  labels:
+    app: rest-poc-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rest-poc-deployment
+  template:
+    metadata:
+      labels:
+        app: rest-poc-deployment
+    spec:
+      containers:
+      - name: rest-poc-deployment
+        image: venugopalhegde/rest-poc:1.0
+        ports:
+        - containerPort: 8000
